@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Malla Medicina UNICAH</title>
+
+<style>
+body{
+  font-family: 'Segoe UI', sans-serif;
+  background:#fff0f6;
+  margin:0;
+  padding:20px;
+}
+h1{
+  text-align:center;
+  color:#c9184a;
+}
+.malla{
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  padding-bottom:20px;
+}
+.periodo{
+  min-width:230px;
+  background:#ffe0ec;
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 6px 12px rgba(0,0,0,.1);
+}
+.periodo h2{
+  text-align:center;
+  color:#9d0208;
+}
+.materia{
+  background:#ffd6e0;
+  padding:10px;
+  border-radius:12px;
+  margin:8px 0;
+  cursor:pointer;
+  font-size:14px;
+  transition:.3s;
+}
+.materia:hover{transform:scale(1.03)}
+.bloqueada{
+  background:#f1f1f1;
+  color:#aaa;
+  cursor:not-allowed;
+}
+.aprobada{
+  background:#ff4d6d;
+  color:white;
+  text-decoration:line-through;
+}
+button{
+  background:#ff4d6d;
+  border:none;
+  color:white;
+  padding:10px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  margin:10px auto;
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌸 Malla Curricular Medicina UNICAH 🌸</h1>
+<button onclick="reiniciar()">Reiniciar malla</button>
+
+<div class="malla" id="malla"></div>
+
+<script>
+const materias = [
+/* I */
+{id:"ES101",n:"Español",p:1,r:[]},
+{id:"MT101",n:"Matemáticas",p:1,r:[]},
+{id:"BG101",n:"Biología I",p:1,r:[]},
+{id:"QM101",n:"Química I",p:1,r:[]},
+{id:"FI101",n:"Filosofía",p:1,r:[]},
+
+/* II */
+{id:"ES201",n:"Expresión Oral y Escrita",p:2,r:["ES101"]},
+{id:"FS202",n:"Física Médica",p:2,r:["MT101"]},
+{id:"HS101",n:"Historia de Honduras",p:2,r:[]},
+{id:"QM206",n:"Química Orgánica",p:2,r:["QM101"]},
+{id:"CR201",n:"El Hombre frente a la Vida",p:2,r:["FI101"]},
+
+/* III */
+{id:"CR203",n:"Ética Médica",p:3,r:["FI101"]},
+{id:"MD202",n:"Bioestadística",p:3,r:["MT101"]},
+{id:"HS104",n:"Historia de la Medicina",p:3,r:["HS101"]},
+{id:"QM301",n:"Bioquímica",p:3,r:["QM206"]},
+{id:"SC101",n:"Sociología",p:3,r:[]},
+
+/* IV */
+{id:"AD302",n:"Métodos de Investigación",p:4,r:["MD202"]},
+{id:"BG205",n:"Ecología",p:4,r:[]},
+{id:"BG206",n:"Embriología",p:4,r:["BG101"]},
+{id:"MD402",n:"Genética",p:4,r:["BG101","QM301"]},
+{id:"PS104",n:"Psicología Médica",p:4,r:["CR201"]},
+
+/* V */
+{id:"AD104",n:"Gestión de la Calidad Total",p:5,r:[]},
+{id:"MD304",n:"Histología",p:5,r:["BG206"]},
+{id:"MD409",n:"Anatomía I",p:5,r:["QM301"]},
+{id:"MD411",n:"Neuroanatomía I",p:5,r:["BG206","MD402"]},
+{id:"IF101",n:"Informática I",p:5,r:[]},
+
+/* VI */
+{id:"MT304",n:"Control Estadístico de la Calidad",p:6,r:["AD104","MD202"]},
+{id:"MD410",n:"Anatomía II",p:6,r:["MD409","MD304"]},
+{id:"MD406",n:"Inmunología",p:6,r:["BG101","QM301"]},
+{id:"MD412",n:"Neuroanatomía II",p:6,r:["MD411"]},
+{id:"MD305",n:"Introducción a la Salud Pública",p:6,r:["AD302","SC101"]},
+
+/* VII */
+{id:"AD402",n:"Planeación y Diseño de Calidad",p:7,r:["MT304"]},
+{id:"MD511",n:"Fisiología I",p:7,r:["MD410","MD412"]},
+{id:"BG404",n:"Microbiología",p:7,r:["MD304","MD406"]},
+{id:"MD405",n:"Parasitología",p:7,r:["MD304"]},
+{id:"MD306",n:"Epidemiología",p:7,r:["MD305"]},
+
+/* VIII */
+{id:"MD407",n:"Medicina Basada en Evidencia",p:8,r:["AD302"]},
+{id:"MD512",n:"Fisiología II",p:8,r:["MD511"]},
+{id:"MD403",n:"Nutrición",p:8,r:[]},
+{id:"CR501",n:"Doctrina Social de la Iglesia",p:8,r:["CR201"]},
+{id:"MD205",n:"Psicopatología",p:8,r:["PS104"]},
+
+/* IX */
+{id:"MD610",n:"Fisiopatología I",p:9,r:["MD512"]},
+{id:"FM601",n:"Farmacología I",p:9,r:["MD512"]},
+{id:"MD607",n:"Patología General",p:9,r:["MD304","MD512"]},
+{id:"CR301",n:"Bioética",p:9,r:["CR203","CR501"]},
+{id:"MD408",n:"Prevención en Salud",p:9,r:["MD306"]},
+
+/* X */
+{id:"MD611",n:"Fisiopatología II",p:10,r:["MD610"]},
+{id:"FM602",n:"Farmacología II",p:10,r:["FM601"]},
+{id:"MD608",n:"Patología Sistémica",p:10,r:["MD607"]},
+{id:"MD504",n:"Administración de Servicios de Salud",p:10,r:["MD408"]},
+
+/* XI */
+{id:"MD701",n:"Radiología e Imagenología",p:11,r:["MD611"]},
+{id:"MD734",n:"Semiología I",p:11,r:["MD608"]},
+{id:"MD609",n:"Patología Clínica",p:11,r:["BG404","MD608"]},
+{id:"MD721",n:"Medicina Legal",p:11,r:["MD608"]},
+
+/* XII */
+{id:"MD716",n:"Terapéutica Farmacológica",p:12,r:["FM602","MD609","MD734"]},
+{id:"MD735",n:"Semiología II",p:12,r:["MD734"]},
+{id:"MD505",n:"Rehabilitación Física",p:12,r:["MD734"]},
+{id:"MD307",n:"Psiquiatría",p:12,r:["MD205","MD306"]},
+
+/* XIII */
+{id:"MD724",n:"Terapéutica Alternativa",p:13,r:["MD408","MD716","MD735"]},
+{id:"MD704",n:"Ginecología y Obstetricia I",p:13,r:["MD408","MD735"]},
+{id:"MD706",n:"Medicina Pediátrica I",p:13,r:["MD408","MD735"]},
+{id:"MD705",n:"Medicina del Adulto I",p:13,r:["MD408","MD735"]},
+
+/* XIV */
+{id:"MD707",n:"Cirugía I",p:14,r:["MD408","MD735"]},
+{id:"MD708",n:"Ginecología y Obstetricia II",p:14,r:["MD704"]},
+{id:"MD709",n:"Medicina del Adulto II",p:14,r:["MD705"]},
+
+/* XV */
+{id:"MD711",n:"Cirugía II",p:15,r:["MD707"]},
+{id:"MD712",n:"Ginecología y Obstetricia III",p:15,r:["MD708"]},
+{id:"MD710",n:"Medicina Pediátrica II",p:15,r:["MD706"]},
+
+/* XVI */
+{id:"MD715",n:"Cirugía III",p:16,r:["MD711"]},
+{id:"MD714",n:"Medicina Pediátrica III",p:16,r:["MD710"]},
+{id:"MD713",n:"Medicina del Adulto III",p:16,r:["MD709"]},
+{id:"MD801",n:"Servicio Comunitario",p:16,r:["MD708","MD709","MD710","MD711"]},
+
+/* XVII */
+{id:"MD727",n:"Otorrinolaringología",p:17,r:["MD715"]},
+{id:"MD726",n:"Ortopedia y Traumatología",p:17,r:["MD713","MD715"]},
+{id:"MD725",n:"Urología",p:17,r:["MD713"]},
+{id:"MD719",n:"Oftalmología",p:17,r:["MD713","MD714"]},
+
+/* XVIII */
+{id:"MD718",n:"Geriatría",p:18,r:["MD307","MD713"]},
+{id:"MD717",n:"Medicina Fetal",p:18,r:["MD712"]},
+{id:"MD720",n:"Neonatología",p:18,r:["MD714"]},
+{id:"MD728",n:"Dermatología",p:18,r:["MD713","MD714"]},
+{id:"MD729",n:"Neurología",p:18,r:["MD713","MD714"]},
+
+/* XIX */
+{id:"MD805",n:"Internado Cirugía",p:19,r:["MD717","MD718","MD720","MD728","MD729","MD801"]},
+{id:"MD802",n:"Internado Ginecobstetricia",p:19,r:["MD717","MD718","MD720","MD728","MD729","MD801"]},
+{id:"MD804",n:"Internado Pediatría",p:19,r:["MD717","MD718","MD720","MD728","MD729","MD801"]},
+{id:"MD803",n:"Internado Medicina Interna",p:19,r:["MD717","MD718","MD720","MD728","MD729","MD801"]},
+
+/* XX */
+{id:"MD900",n:"Servicio Social",p:20,r:["MD805","MD802","MD804","MD803"]}
+];
+
+let aprobadas = JSON.parse(localStorage.getItem("aprobadas")) || [];
+
+function puede(m){return m.r.every(x=>aprobadas.includes(x));}
+
+function render(){
+  const c=document.getElementById("malla");
+  c.innerHTML="";
+  for(let p=1;p<=20;p++){
+    const col=document.createElement("div");
+    col.className="periodo";
+    col.innerHTML=`<h2>Periodo ${p}</h2>`;
+    materias.filter(m=>m.p===p).forEach(m=>{
+      const d=document.createElement("div");
+      d.className="materia";
+      if(aprobadas.includes(m.id)) d.classList.add("aprobada");
+      else if(!puede(m)) d.classList.add("bloqueada");
+      d.textContent=m.n;
+      d.onclick=()=>{
+        if(d.classList.contains("bloqueada"))return;
+        if(!aprobadas.includes(m.id)){
+          aprobadas.push(m.id);
+          localStorage.setItem("aprobadas",JSON.stringify(aprobadas));
+          render();
+        }
+      }
+      col.appendChild(d);
+    });
+    c.appendChild(col);
+  }
+}
+function reiniciar(){
+  if(confirm("¿Reiniciar toda la malla?")){
+    localStorage.removeItem("aprobadas");
+    aprobadas=[];
+    render();
+  }
+}
+render();
+</script>
+
+</body>
+</html>
