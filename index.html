@@ -4,189 +4,117 @@
 <meta charset="UTF-8">
 <title>Malla Curricular Medicina</title>
 <style>
-body{
-  font-family: "Poppins", sans-serif;
-  background:#f6f5fa;
-  margin:0;
-  padding:20px;
-}
-h1,h2{
-  text-align:center;
-}
-.progress-container{
-  width:80%;
-  margin:20px auto;
-}
-.progress-bar{
-  width:100%;
-  height:20px;
-  background:#ddd;
-  border-radius:20px;
-  overflow:hidden;
-}
-.progress{
-  height:100%;
-  background:linear-gradient(90deg,#a18cd1,#fbc2eb);
-  width:0%;
-  transition:.5s;
-}
-#percentage{
-  text-align:center;
-  margin-top:8px;
-  font-weight:bold;
-}
-.periodo{
-  margin:30px 0;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:15px;
-}
-.card{
-  padding:15px;
-  border-radius:18px;
-  background:#eee;
-  cursor:pointer;
-  box-shadow:0 8px 18px rgba(0,0,0,.08);
-  transition:.3s;
-}
-.card:hover{
-  transform:scale(1.03);
-}
-.aprobada{
-  background:#b9fbc0;
-}
-.disponible{
-  background:#d7c7ff;
-}
-.bloqueada{
-  background:#e0e0e0;
-  cursor:not-allowed;
-}
-.laboratorio{
-  background:#cce5ff;
-}
-.modulo{
-  background:#ffd6e8;
-}
-small{
-  display:block;
-  opacity:.7;
-}
+body{font-family:Poppins,Arial;background:#f6f5fa;margin:0;padding:20px}
+h1,h2{text-align:center}
+.progress-box{width:80%;margin:20px auto}
+.bar{background:#ddd;height:20px;border-radius:20px;overflow:hidden}
+.bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#a18cd1,#fbc2eb);transition:.4s}
+.card{padding:14px;border-radius:16px;box-shadow:0 8px 18px rgba(0,0,0,.08);cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+.bloq{background:#e0e0e0;cursor:not-allowed}
+.ok{background:#b9fbc0}
+.disp{background:#d7c7ff}
+.lab{background:#cce5ff}
+.copro{background:#ffd6e8}
+.ing{background:#fff3b0}
+small{opacity:.7}
 </style>
 </head>
-
 <body>
-
 <h1>🩺 Malla Curricular – Medicina</h1>
-
-<div class="progress-container">
-  <div class="progress-bar">
-    <div class="progress" id="progress"></div>
-  </div>
-  <div id="percentage">0%</div>
+<div class="progress-box">
+  <div class="bar"><div class="bar-fill" id="bar"></div></div>
+  <p id="pct" style="text-align:center;font-weight:bold">0%</p>
 </div>
-<div id="malla"></div>
-<h2>🧪 Laboratorios</h2>
-<div id="laboratorios" class="grid"></div>
-<h2>📦 Módulos</h2>
-<div id="modulos" class="grid"></div>
+<div id="contenedor"></div>
 <script>
 const materias = [
-  {id:"BG101",nombre:"Biología I",periodo:1,req:[],tipo:"materia"},
-  {id:"QM101",nombre:"Química I",periodo:1,req:[],tipo:"materia"},
-  {id:"QM206",nombre:"Química Orgánica",periodo:2,req:["QM101"],tipo:"materia"},
-  {id:"QM301",nombre:"Bioquímica",periodo:3,req:["QM206"],tipo:"materia"},
-  {id:"BG206",nombre:"Embriología",periodo:4,req:["BG101"],tipo:"materia"},
-  {id:"MD304",nombre:"Histología",periodo:5,req:["BG206"],tipo:"materia"},
-  {id:"MD409",nombre:"Anatomía I",periodo:5,req:["QM301"],tipo:"materia"},
-  {id:"MD410",nombre:"Anatomía II",periodo:6,req:["MD409","MD304"],tipo:"materia"},
-  {id:"MD411",nombre:"Neuroanatomía I",periodo:5,req:["BG206"],tipo:"materia"},
-  {id:"MD412",nombre:"Neuroanatomía II",periodo:6,req:["MD411"],tipo:"materia"},
-  {id:"MD511",nombre:"Fisiología I",periodo:7,req:["MD410","MD412"],tipo:"materia"},
-  {id:"MD512",nombre:"Fisiología II",periodo:8,req:["MD511"],tipo:"materia"},
-  {id:"MD610",nombre:"Fisiopatología I",periodo:9,req:["MD512"],tipo:"materia"},
-  {id:"MD611",nombre:"Fisiopatología II",periodo:10,req:["MD610"],tipo:"materia"},
+/* ================== CICLO BÁSICO ================== */
+{id:"ES101",n:"Español",p:1,r:[],t:"mat"},
+{id:"MT101",n:"Matemáticas",p:1,r:[],t:"mat"},
+{id:"BG101",n:"Biología I",p:1,r:[],t:"mat"},
+{id:"QM101",n:"Química I",p:1,r:[],t:"mat"},
+{id:"FI101",n:"Filosofía",p:1,r:[],t:"mat"},
+{id:"ES201",n:"Expresión Oral y Escrita",p:2,r:["ES101"],t:"mat"},
+{id:"FS202",n:"Física Médica",p:2,r:["MT101"],t:"mat"},
+{id:"HS101",n:"Historia de Honduras",p:2,r:[],t:"mat"},
+{id:"QM206",n:"Química Orgánica",p:2,r:["QM101"],t:"mat"},
+{id:"CR201",n:"El Hombre Frente a la Vida",p:2,r:["FI101"],t:"mat"},
+{id:"CR203",n:"Ética Médica",p:3,r:["FI101"],t:"mat"},
+{id:"MD202",n:"Bioestadística",p:3,r:["MT101"],t:"mat"},
+{id:"HS104",n:"Historia de la Medicina",p:3,r:["HS101"],t:"mat"},
+{id:"QM301",n:"Bioquímica",p:3,r:["QM206"],t:"mat"},
+{id:"SC101",n:"Sociología",p:3,r:[],t:"mat"},
+/* ================== MORFOLOGÍA ================== */
+{id:"BG206",n:"Embriología",p:4,r:["BG101"],t:"mat"},
+{id:"MD304",n:"Histología",p:5,r:["BG206"],t:"mat"},
+{id:"MD409",n:"Anatomía I",p:5,r:["QM301"],t:"mat"},
+{id:"LAB_ANAT",n:"Laboratorio Anatomía",p:5,r:["MD409"],t:"lab"},
+{id:"MD410",n:"Anatomía II",p:6,r:["MD409","MD304"],t:"mat"},
+{id:"MD411",n:"Neuroanatomía I",p:5,r:["BG206"],t:"mat"},
+{id:"LAB_NEURO",n:"Lab Neuroanatomía",p:5,r:["MD411"],t:"lab"},
+{id:"MD412",n:"Neuroanatomía II",p:6,r:["MD411"],t:"mat"},
 
-  {id:"LAB_ANAT",nombre:"Laboratorio Anatomía",req:["MD409"],tipo:"laboratorio"},
-  {id:"LAB_NEURO",nombre:"Laboratorio Neuroanatomía",req:["MD411"],tipo:"laboratorio"},
+/* ================== FISIOLOGÍA ================== */
+{id:"MD511",n:"Fisiología I",p:7,r:["MD410","MD412"],t:"mat"},
+{id:"MD512",n:"Fisiología II",p:8,r:["MD511"],t:"mat"},
 
-  {id:"MOD_ING",nombre:"Módulo Inglés",req:[],tipo:"modulo"},
-  {id:"MOD_DH",nombre:"Módulo Derechos Humanos",req:[],tipo:"modulo"}
+/* ================== CLÍNICAS BÁSICAS ================== */
+{id:"MD610",n:"Fisiopatología I",p:9,r:["MD512"],t:"mat"},
+{id:"MD611",n:"Fisiopatología II",p:10,r:["MD610"],t:"mat"},
+
+/* ================== COPROGRAMÁTICAS ================== */
+{id:"CP1",n:"Seminario Vida Universitaria",r:[],t:"copro"},
+{id:"CP2",n:"Trabajo Social Educativo",r:[],t:"copro"},
+{id:"CP3",n:"Seminario de Familia",r:[],t:"copro"},
+
+/* ================== INGLÉS ================== */
+{id:"ING1",n:"Inglés I",r:[],t:"ing"},
+{id:"ING2",n:"Inglés II",r:["ING1"],t:"ing"},
+{id:"ING3",n:"Inglés III",r:["ING2"],t:"ing"},
+{id:"ING4",n:"Inglés IV",r:["ING3"],t:"ing"},
+{id:"ING5",n:"Inglés V",r:["ING4"],t:"ing"},
+{id:"ING6",n:"Inglés VI",r:["ING5"],t:"ing"}
 ];
-
-let aprobadas = JSON.parse(localStorage.getItem("aprobadas")) || [];
-
-function puede(m){
-  return m.req.every(r=>aprobadas.includes(r));
-}
-
-function toggle(id){
-  if(aprobadas.includes(id)){
-    aprobadas = aprobadas.filter(x=>x!==id);
-  }else{
-    aprobadas.push(id);
-  }
-  localStorage.setItem("aprobadas",JSON.stringify(aprobadas));
-  render();
-}
-
-function render(){
-  document.getElementById("malla").innerHTML="";
-  document.getElementById("laboratorios").innerHTML="";
-  document.getElementById("modulos").innerHTML="";
-
-  const periodos=[...new Set(materias.filter(m=>m.periodo).map(m=>m.periodo))];
-
-  periodos.forEach(p=>{
-    const div=document.createElement("div");
-    div.className="periodo";
-    div.innerHTML=`<h2>Periodo ${p}</h2><div class="grid"></div>`;
-    const grid=div.querySelector(".grid");
-
-    materias.filter(m=>m.periodo===p).forEach(m=>{
-      const c=document.createElement("div");
-      c.className="card";
-      if(aprobadas.includes(m.id)) c.classList.add("aprobada");
-      else if(puede(m)) c.classList.add("disponible");
-      else c.classList.add("bloqueada");
-
-      c.innerHTML=`<strong>${m.nombre}</strong><small>${m.id}</small>`;
-      if(puede(m)) c.onclick=()=>toggle(m.id);
-      grid.appendChild(c);
-    });
-
-    document.getElementById("malla").appendChild(div);
+let ok = JSON.parse(localStorage.getItem("ok")) || [];
+function puede(m){return m.r.every(x=>ok.includes(x))}
+function click(id){if(ok.includes(id))ok=ok.filter(x=>x!==id);else ok.push(id);
+localStorage.setItem("ok",JSON.stringify(ok));draw()}
+function draw(){
+const c=document.getElementById("contenedor");c.innerHTML="";
+const ps=[...new Set(materias.filter(x=>x.p).map(x=>x.p))];
+ps.forEach(p=>{
+  const d=document.createElement("div");
+  d.innerHTML=`<h2>Periodo ${p}</h2><div class="grid"></div>`;
+  const g=d.querySelector(".grid");
+  materias.filter(x=>x.p===p).forEach(m=>{
+    const k=document.createElement("div");
+    let cls="card ";
+    if(ok.includes(m.id))cls+="ok";
+    else if(puede(m))cls+=m.t==="lab"?"lab":"disp";
+    else cls+="bloq";
+    k.className=cls;
+    k.innerHTML=`<strong>${m.n}</strong><small>${m.id}</small>`;
+    if(puede(m))k.onclick=()=>click(m.id);
+    g.appendChild(k);
   });
-
-  materias.filter(m=>m.tipo==="laboratorio").forEach(m=>{
-    const c=document.createElement("div");
-    c.className="card laboratorio";
-    if(aprobadas.includes(m.id)) c.classList.add("aprobada");
-    else if(!puede(m)) c.classList.add("bloqueada");
-    c.innerHTML=`<strong>${m.nombre}</strong>`;
-    if(puede(m)) c.onclick=()=>toggle(m.id);
-    document.getElementById("laboratorios").appendChild(c);
-  });
-
-  materias.filter(m=>m.tipo==="modulo").forEach(m=>{
-    const c=document.createElement("div");
-    c.className="card modulo";
-    if(aprobadas.includes(m.id)) c.classList.add("aprobada");
-    c.innerHTML=`<strong>${m.nombre}</strong>`;
-    c.onclick=()=>toggle(m.id);
-    document.getElementById("modulos").appendChild(c);
-  });
-
-  const total=materias.length;
-  const pct=Math.round((aprobadas.length/total)*100);
-  document.getElementById("progress").style.width=pct+"%";
-  document.getElementById("percentage").innerText=pct+"% completado";
+  c.appendChild(d);
+});
+const extras=document.createElement("div");
+extras.innerHTML="<h2>Requisitos de Graduación</h2><div class='grid'></div>";
+const g=extras.querySelector(".grid");
+materias.filter(x=>!x.p).forEach(m=>{
+  const k=document.createElement("div");
+  k.className="card "+(m.t==="copro"?"copro":"ing")+(ok.includes(m.id)?" ok":"");
+  k.innerHTML=`<strong>${m.n}</strong>`;
+  k.onclick=()=>click(m.id);
+  g.appendChild(k);
+});
+c.appendChild(extras);
+document.getElementById("bar").style.width=Math.round(ok.length/materias.length*100)+"%";
+document.getElementById("pct").innerText=Math.round(ok.length/materias.length*100)+"% completado";
 }
-
-render();
+draw();
 </script>
-
 </body>
 </html>
